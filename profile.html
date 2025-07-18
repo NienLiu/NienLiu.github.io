@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人主页 - ArtDesign</title>
+    <link rel="stylesheet" href="mainstyle.css">
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 80px auto 2rem;
+            padding: 0 1rem;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        .default-avatar {
+            font-size: 2.5rem;
+            color: #9370DB;
+        }
+        .avatar:hover::after {
+            content: '更换头像';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0,0,0,0.5);
+            color: white;
+            text-align: center;
+            padding: 5px 0;
+            font-size: 0.8rem;
+        }
+        .user-info h2 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .user-info p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        .notebook-section {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 2rem;
+        }
+        .notebook-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .notebook-list {
+            display: grid;
+            gap: 1rem;
+        }
+        .notebook-card {
+            padding: 1.5rem;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .notebook-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .notebook-card h3 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .notebook-card p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        .create-btn {
+            padding: 0.8rem 1.5rem;
+            background-color: #9370DB;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .create-btn:hover {
+            background-color: #7b5bc7;
+        }
+        .logout-btn {
+            background-color: transparent;
+            color: #666;
+            border: 1px solid #ddd;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="logo">ArtDesign</div>
+        <div class="nav-links">
+            <a href="ARTmain.html" class="nav-link">首页</a>
+            <a href="material.html" class="nav-link">素材积累</a>
+            <a href="inspiration.html" class="nav-link">灵感风格</a>
+            <a href="skill.html" class="nav-link">美工技巧</a>
+            <a id="login-link" class="nav-link" href="login.html">登录/注册</a>
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="avatar" id="avatar-container">
+                <img id="avatar-img" src="" alt="用户头像" class="avatar-img">
+                <span id="default-avatar" class="default-avatar">U</span>
+                <input type="file" id="avatar-upload" accept="image/*" style="display: none;">
+            </div>
+            <div class="user-info">
+                <h2 id="username-display">用户名</h2>
+                <p>个人手账本管理</p>
+                <button class="logout-btn" id="logout-btn">退出登录</button>
+            </div>
+        </div>
+
+        <div class="notebook-section">
+            <div class="notebook-header">
+                <h2>我的手账本</h2>
+                <button class="create-btn" id="create-notebook">创建新笔记</button>
+            </div>
+
+            <div class="notebook-list" id="notebook-list">
+                <!-- 手账本列表将通过JS动态生成 -->
+                <div class="notebook-card" data-id="1" data-title="我的设计灵感">
+                    <h3>我的设计灵感</h3>
+                    <p>记录日常设计灵感和创意...</p>
+                </div>
+                <div class="notebook-card" data-id="2" data-title="PS技巧收藏">
+                    <h3>PS技巧收藏</h3>
+                    <p>收集实用的Photoshop技巧...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // 显示用户名
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (user && user.username) {
+                document.getElementById('username-display').textContent = user.username;
+                
+                // 加载用户头像
+                if (user.avatar) {
+                    const avatarImg = document.getElementById('avatar-img');
+                    const defaultAvatar = document.getElementById('default-avatar');
+                    avatarImg.src = user.avatar;
+                    avatarImg.style.display = 'block';
+                    defaultAvatar.style.display = 'none';
+                }
+            } else {
+                // 如果未登录，重定向到登录页
+                window.location.href = 'login.html';
+            }
+
+            // 头像上传功能
+            document.getElementById('avatar-container').addEventListener('click', function() {
+                document.getElementById('avatar-upload').click();
+            });
+            
+            document.getElementById('avatar-upload').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const avatarSrc = event.target.result;
+                        const avatarImg = document.getElementById('avatar-img');
+                        const defaultAvatar = document.getElementById('default-avatar');
+                        
+                        avatarImg.src = avatarSrc;
+                        avatarImg.style.display = 'block';
+                        defaultAvatar.style.display = 'none';
+                        
+                        // 保存头像到用户数据
+                        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                        currentUser.avatar = avatarSrc;
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // 退出登录
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'ARTmain.html';
+            });
+
+            // 创建新笔记
+            // 生成唯一ID
+            function generateId() {
+                return Date.now().toString(36) + Math.random().toString(36).substr(2);
+            }
+
+            // 加载手账本列表
+            function loadNotebooks() {
+                const notebookList = document.getElementById('notebook-list');
+                notebookList.innerHTML = '';
+                
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (!currentUser || !currentUser.username) return;
+                
+                const userNotebooks = JSON.parse(localStorage.getItem('userNotebooks') || '{}');
+                const userNotebookData = userNotebooks[currentUser.username] || {};
+                
+                for (const [id, notebook] of Object.entries(userNotebookData)) {
+                    const notebookCard = document.createElement('div');
+                    notebookCard.className = 'notebook-card';
+                    notebookCard.dataset.id = id;
+                    notebookCard.dataset.title = notebook.title;
+                    notebookCard.innerHTML = `
+                        <h3>${notebook.title}</h3>
+                        <p>${notebook.text.substring(0, 50)}${notebook.text.length > 50 ? '...' : ''}</p>
+                    `;
+                    notebookList.appendChild(notebookCard);
+                }
+            }
+
+            // 创建新手账本
+            document.getElementById('create-notebook').addEventListener('click', function() {
+                const notebookName = prompt('请输入手账本名称:');
+                if (notebookName && notebookName.trim()) {
+                    const notebookId = generateId();
+                    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                    if (!currentUser || !currentUser.username) return;
+                    
+                    const userNotebooks = JSON.parse(localStorage.getItem('userNotebooks') || '{}');
+                    if (!userNotebooks[currentUser.username]) {
+                        userNotebooks[currentUser.username] = {};
+                    }
+                    
+                    userNotebooks[currentUser.username][notebookId] = {
+                        title: notebookName,
+                        text: '',
+                        images: []
+                    };
+                    
+                    localStorage.setItem('userNotebooks', JSON.stringify(userNotebooks));
+                    loadNotebooks();
+                }
+            });
+
+            // 手账本点击事件
+            document.getElementById('notebook-list').addEventListener('click', function(e) {
+                const notebookCard = e.target.closest('.notebook-card');
+                if (notebookCard) {
+                    const id = notebookCard.dataset.id;
+                    const title = notebookCard.dataset.title;
+                    window.location.href = `notebook.html?id=${id}&title=${encodeURIComponent(title)}`;
+                }
+            });
+
+            // 初始加载手账本列表
+            loadNotebooks();
+        });
+    </script>
+</body>
+</html>

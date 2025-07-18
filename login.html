@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录/注册 - ArtDesign</title>
+    <link rel="stylesheet" href="mainstyle.css">
+    <style>
+        .auth-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+        }
+        .auth-tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            color: #666;
+            border-bottom: 3px solid transparent;
+        }
+        .auth-tab.active {
+            color: #9370DB;
+            border-bottom-color: #9370DB;
+        }
+        .auth-form {
+            display: none;
+        }
+        .auth-form.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        input:focus {
+            border-color: #9370DB;
+            outline: none;
+        }
+        .btn {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #9370DB;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #7b5bc7;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="logo">ArtDesign</div>
+        <div class="nav-links">
+            <a href="ARTmain.html" class="nav-link">首页</a>
+            <a href="material.html" class="nav-link">素材积累</a>
+            <a href="inspiration.html" class="nav-link">灵感风格</a>
+            <a href="skill.html" class="nav-link">美工技巧</a>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-tabs">
+            <div class="auth-tab active" data-form="login">登录</div>
+            <div class="auth-tab" data-form="register">注册</div>
+        </div>
+
+        <form id="login" class="auth-form active">
+            <div class="form-group">
+                <label for="login-username">用户名</label>
+                <input type="text" id="login-username" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password">密码</label>
+                <div class="password-container">
+                    <input type="password" id="login-password" required>
+                    <button type="button" class="toggle-password" data-target="login-password">显示</button>
+                </div>
+            </div>
+            <button type="submit" class="btn">登录</button>
+        </form>
+
+        <form id="register" class="auth-form">
+            <div class="form-group">
+                <label for="register-username">用户名</label>
+                <input type="text" id="register-username" required>
+            </div>
+            <div class="form-group">
+                <label for="register-password">密码</label>
+                <div class="password-container">
+                    <input type="password" id="register-password" required>
+                    <button type="button" class="toggle-password" data-target="register-password">显示</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="register-confirm">确认密码</label>
+                <div class="password-container">
+                    <input type="password" id="register-confirm" required>
+                    <button type="button" class="toggle-password" data-target="register-confirm">显示</button>
+                </div>
+            </div>
+            <button type="submit" class="btn">注册</button>
+        </form>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // 密码显示/隐藏切换功能
+        function togglePassword(targetId) {
+            const passwordInput = document.getElementById(targetId);
+            const toggleButton = passwordInput.nextElementSibling;
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.textContent = '隐藏';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.textContent = '显示';
+            }
+        }
+
+        // 为所有密码切换按钮添加事件监听
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.getAttribute('data-target');
+                togglePassword(targetId);
+            });
+        });
+
+        // 切换登录/注册表单
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有active类
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+                
+                // 添加active类到当前选中项
+                tab.classList.add('active');
+                const formId = tab.getAttribute('data-form');
+                document.getElementById(formId).classList.add('active');
+            });
+        });
+
+        // 登录表单提交
+        document.getElementById('login').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            
+            // 获取用户数据
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+            
+            // 检查用户是否存在
+            if (!users[username]) {
+                alert('未注册的用户');
+                return;
+            }
+            
+            // 检查密码是否匹配
+            if (users[username] !== password) {
+                alert('密码错误');
+                return;
+            }
+            
+            // 设置当前用户并跳转
+            localStorage.setItem('currentUser', JSON.stringify({username}));
+            window.location.href = 'ARTmain.html';
+        });
+
+        // 注册表单提交
+        document.getElementById('register').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm').value;
+            
+            // 验证密码长度
+            if (password.length < 6) {
+                alert('密码长度不能少于6位');
+                return;
+            }
+            
+            // 验证密码一致
+            if (password !== confirmPassword) {
+                alert('两次密码输入不一致');
+                return;
+            }
+            
+            // 获取现有用户或创建新对象
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+            
+            // 检查用户名是否已存在
+            if (users[username]) {
+                alert('用户名已存在');
+                return;
+            }
+            
+            // 保存新用户
+            users[username] = password;
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // 设置当前用户并跳转
+            localStorage.setItem('currentUser', JSON.stringify({username}));
+            window.location.href = 'ARTmain.html';
+        });
+    </script>
+</body>
+</html>

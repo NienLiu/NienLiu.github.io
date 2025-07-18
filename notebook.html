@@ -1,0 +1,234 @@
+然<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手账本 - ArtDesign</title>
+    <link rel="stylesheet" href="mainstyle.css">
+    <style>
+        .notebook-container {
+            max-width: 800px;
+            margin: 80px auto 2rem;
+            padding: 0 1rem;
+        }
+        .notebook-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .notebook-title {
+            font-size: 1.8rem;
+            color: #333;
+        }
+        .notebook-toolbar {
+            display: flex;
+            gap: 1rem;
+        }
+        .tool-btn {
+            padding: 0.5rem 1rem;
+            background-color: #9370DB;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .tool-btn:hover {
+            background-color: #7b5bc7;
+        }
+        .notebook-content {
+            background-color: #fffdf5;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 3rem 2rem;
+            min-height: 600px;
+            background-image: linear-gradient(#f5f5f5 1px, transparent 1px);
+            background-size: 100% 2rem;
+            background-position: 0 2rem;
+            position: relative;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .notebook-content::before {
+            content: '';
+            position: absolute;
+            left: 2rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #ffcccc;
+        }
+        .text-editor {
+            width: 100%;
+            min-height: 400px;
+            border: none;
+            background: transparent;
+            resize: none;
+            font-size: 1.1rem;
+            line-height: 2rem;
+            padding-left: 3rem;
+            outline: none;
+            color: #333;
+        }
+        .image-upload-section {
+            margin: 2rem 0;
+            padding-left: 3rem;
+        }
+        .upload-btn {
+            padding: 0.5rem 1rem;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+        .upload-btn:hover {
+            background-color: #5a6268;
+        }
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .image-preview {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #9370DB;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="logo">ArtDesign</div>
+        <div class="nav-links">
+            <a href="ARTmain.html" class="nav-link">首页</a>
+            <a href="material.html" class="nav-link">素材积累</a>
+            <a href="inspiration.html" class="nav-link">灵感风格</a>
+            <a href="skill.html" class="nav-link">美工技巧</a>
+            <a id="login-link" class="nav-link" href="login.html">登录/注册</a>
+        </div>
+    </nav>
+
+    <div class="notebook-container">
+        <a href="profile.html" class="back-link">&larr; 返回我的手账本</a>
+        <div class="notebook-header">
+            <h1 class="notebook-title" id="notebook-title">我的手账本</h1>
+            <div class="notebook-toolbar">
+                <button class="tool-btn" id="save-notebook">
+                    <i>💾</i> 保存
+                </button>
+            </div>
+        </div>
+
+        <div class="notebook-content">
+            <textarea class="text-editor" id="notebook-text" placeholder="在这里开始记录你的内容..."></textarea>
+
+            <div class="image-upload-section">
+                <button class="upload-btn" id="upload-btn">上传图片</button>
+                <input type="file" id="image-upload" accept="image/*" multiple style="display: none;">
+                <div class="image-preview-container" id="image-preview-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查登录状态
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user || !user.username) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // 获取URL参数中的手账本ID
+            const urlParams = new URLSearchParams(window.location.search);
+            const notebookId = urlParams.get('id');
+            const notebookTitle = urlParams.get('title') || '我的手账本';
+            document.getElementById('notebook-title').textContent = notebookTitle;
+
+            // 获取当前用户
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser || !currentUser.username) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // 从localStorage加载用户手账本内容
+            const userNotebooks = JSON.parse(localStorage.getItem('userNotebooks') || '{}');
+            const userNotebookData = userNotebooks[currentUser.username] || {};
+            const notebook = userNotebookData[notebookId] || { title: notebookTitle, text: '', images: [] };
+            document.getElementById('notebook-text').value = notebook.text;
+
+            // 加载图片预览
+            const previewContainer = document.getElementById('image-preview-container');
+            notebook.images.forEach(imgSrc => {
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.className = 'image-preview';
+                previewContainer.appendChild(img);
+            });
+
+            // 保存手账本内容
+            document.getElementById('save-notebook').addEventListener('click', function() {
+                const text = document.getElementById('notebook-text').value;
+                const images = Array.from(previewContainer.querySelectorAll('img'))
+                    .map(img => img.src);
+
+                // 获取当前用户
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (!currentUser || !currentUser.username) return;
+                
+                // 保存到用户手账本数据
+                const userNotebooks = JSON.parse(localStorage.getItem('userNotebooks') || '{}');
+                if (!userNotebooks[currentUser.username]) {
+                    userNotebooks[currentUser.username] = {};
+                }
+                userNotebooks[currentUser.username][notebookId] = { title: notebookTitle, text, images };
+                localStorage.setItem('userNotebooks', JSON.stringify(userNotebooks));
+
+                alert('手账本已保存！');
+            });
+
+            // 图片上传功能
+            document.getElementById('upload-btn').addEventListener('click', function() {
+                document.getElementById('image-upload').click();
+            });
+
+            document.getElementById('image-upload').addEventListener('change', function(e) {
+                const files = e.target.files;
+                if (!files.length) return;
+
+                for (let i = 0; i < files.length; i++) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        img.className = 'image-preview';
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(files[i]);
+                }
+
+                // 清空文件输入，允许重复选择同一文件
+                this.value = '';
+            });
+        });
+    </script>
+</body>
+</html>

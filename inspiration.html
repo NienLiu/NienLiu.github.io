@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵感风格 - 艺术设计资源平台</title>
+    <link rel="stylesheet" href="mainstyle.css">
+</head>
+
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar" id="navbar">
+        <div class="logo">ArtDesign</div>
+        <div class="nav-links">
+            <a href="ARTmain.html" class="nav-link">首页</a>
+            <a href="material.html" class="nav-link">素材积累</a>
+            <a href="inspiration.html" class="nav-link active">灵感风格</a>
+            <a href="skill.html" class="nav-link">美工技巧</a>
+            <a id="login-link" class="nav-link" href="login.html">登录/注册</a>
+        </div>
+    </nav>
+
+    <!-- 页面内容 -->
+    <section class="page-content">
+        <div class="container">
+            <h1>灵感风格</h1>
+            <p>探索不同艺术风格的灵感来源，从古典到现代，从极简到复古，为您的设计注入独特的创意和风格元素。</p>
+            <!-- 艺术风格手风琴展示 -->
+            <section class="style-gallery">
+                <div class="shell">
+                    <div class="box">
+            <img src="assests/古典主义.jpeg" alt="古典主义">
+            <span>古典主义</span>
+        </div>
+                    <div class="box">
+            <img src="assests/印象派.jpeg" alt="印象派">
+            <span>印象派</span>
+        </div>
+                    <div class="box">
+            <img src="assests/巴洛克主义.jpeg" alt="巴洛克主义">
+            <span>巴洛克主义</span>
+        </div>
+                    <div class="box">
+            <img src="assests/洛可可风格.jpeg" alt="洛可可风格">
+            <span>洛可可风格</span>
+        </div>
+                    <div class="box">
+            <img src="assests/现实主义.jpeg" alt="现实主义">
+            <span>现实主义</span>
+        </div>
+                </div>
+            </section>
+            <!-- 可添加风格分类、案例展示等内容 -->
+            <section class="chat-section">
+                <h2 class="section-title">艺术风格AI咨询</h2>
+                <div class="chat-container">
+                    <div id="chat-messages" class="chat-messages"></div>
+                    <div class="chat-input-area">
+                        <input type="text" id="user-input" placeholder="请输入关于艺术风格的问题..." class="chat-input">
+                        <button id="send-btn" class="btn send-btn">发送</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <script src="ARTmain.js"></script>
+    <script src="inspiration.js"></script>
+    <script src="auth.js"></script>
+</body>
+
+</html>
