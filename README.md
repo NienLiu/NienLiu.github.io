@@ -104,3 +104,17 @@ Flyway 在启动时自动执行：
 
 4. **想切换 OpenAI Compatible 模式**
    - 配置 `llm.mode=openai` 且补全 `llm.base-url` 与 `llm.api-key`。
+
+## 八、任务进度状态（截至 2026-05-23）
+
+- 前后端分离实现任务 PR：`#1`（已合并）
+  - 链接：https://github.com/NienLiu/NienLiu.github.io/pull/1
+  - 状态：`closed` + `merged`（产物已进入 `main`）
+- 相关回滚 PR：`#2`（未合并）
+  - 链接：https://github.com/NienLiu/NienLiu.github.io/pull/2
+  - 状态：`open`（如不需要回滚可关闭）
+- 当前状态检查任务 PR：`#3`（进行中）
+  - 链接：https://github.com/NienLiu/NienLiu.github.io/pull/3
+  - 状态：`open`（用于同步进度说明）
+
+说明：此前会话里显示的 Copilot task `queued` 更可能是任务页面状态滞后；从仓库 PR 事实看，实现任务已完成并合并，不属于“卡住”。
