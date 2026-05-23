@@ -148,3 +148,6 @@ npm run build
 
 5. **想切换 OpenAI Compatible 模式**
    - 配置 `llm.mode=openai` 且补全 `llm.base-url` 与 `llm.api-key`。
+
+6. **Mock 数据想恢复初始状态**
+   - 在浏览器开发者工具执行 `localStorage.clear()` 后刷新页面。

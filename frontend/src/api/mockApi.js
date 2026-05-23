@@ -14,6 +14,9 @@ const COUNTER_KEYS = {
 }
 
 const DEMO_PASSWORD = '123456'
+const DEMO_USER_COUNT = 50
+const MOCK_REPLY_PREFIX = '你好，我是'
+const MOCK_REPLY_SUFFIX = '风格继续回应你。'
 
 const parse = (value, fallback) => {
   if (!value) return fallback
@@ -41,13 +44,12 @@ const toUserDto = (user) => ({ id: user.id, username: user.username, displayName
 const seedIfNeeded = () => {
   const users = getJson(STORAGE_KEYS.users, null)
   if (!users || users.length === 0) {
-    const generatedUsers = Array.from({ length: 50 }, (_, i) => {
+    const generatedUsers = Array.from({ length: DEMO_USER_COUNT }, (_, i) => {
       const n = i + 1
       const username = `user${String(n).padStart(3, '0')}`
       return {
         id: n,
         username,
-        password: DEMO_PASSWORD,
         displayName: `Demo ${username}`,
       }
     })
@@ -129,14 +131,15 @@ const ensureSessionOwner = (sessionId, userId) => {
 
 const mockAssistantReply = (card, content) => {
   const firstMessage = card.firstMessage ? `开场白参考：「${card.firstMessage}」。` : ''
-  return `你好，我是${card.name}。${firstMessage}你刚刚说“${content}”。我会以「${card.personality || '自然'}」风格继续回应你。`
+  return `${MOCK_REPLY_PREFIX}${card.name}。${firstMessage}你刚刚说“${content}”。我会以「${card.personality || '自然'}」${MOCK_REPLY_SUFFIX}`
 }
 
 const auth = {
   login(payload) {
     seedIfNeeded()
     const users = getJson(STORAGE_KEYS.users, [])
-    const user = users.find((item) => item.username === payload?.username && item.password === payload?.password)
+    const user = users.find((item) => item.username === payload?.username)
+    if (payload?.password !== DEMO_PASSWORD) return fail(401, '用户名或密码错误')
     if (!user) return fail(401, '用户名或密码错误')
     localStorage.setItem(STORAGE_KEYS.sessionUserId, String(user.id))
     return ok(toUserDto(user))
