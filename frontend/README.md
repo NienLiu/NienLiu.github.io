@@ -1,5 +1,15 @@
-# Vue 3 + Vite
+# Frontend (Vue3 + Vite)
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## 启动
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+```bash
+npm i
+npm run dev
+```
+
+默认 `VITE_API_MODE=mock`，可在无后端/无 MySQL 情况下演示登录、人设卡 CRUD、聊天流程。
+
+## API 模式切换
+
+- `VITE_API_MODE=mock`：使用 localStorage Mock API（默认）
+- `VITE_API_MODE=real`：请求 `VITE_API_BASE_URL` 指定的后端地址（默认 `http://localhost:8080`）
