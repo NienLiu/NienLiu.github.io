@@ -110,7 +110,7 @@ Flyway 在启动时自动执行：
 - 前后端分离实现任务 PR：`#1`（已合并）
   - 链接：https://github.com/NienLiu/NienLiu.github.io/pull/1
   - 状态：`closed` + `merged`（产物已进入 `main`）
-- 相关回滚 PR：`#2`（打开中，尚未合并）
+- 相关回滚 PR：`#2`（未合并）
   - 链接：https://github.com/NienLiu/NienLiu.github.io/pull/2
   - 状态：`open`（如不需要回滚可关闭）
 - 当前状态检查任务 PR：`#3`（进行中）
