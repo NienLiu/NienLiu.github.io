@@ -13,6 +13,8 @@ const COUNTER_KEYS = {
   chatMessages: 'demo.nextMessageId',
 }
 
+const DEMO_PASSWORD = '123456'
+
 const parse = (value, fallback) => {
   if (!value) return fallback
   try {
@@ -45,7 +47,7 @@ const seedIfNeeded = () => {
       return {
         id: n,
         username,
-        password: '123456',
+        password: DEMO_PASSWORD,
         displayName: `Demo ${username}`,
       }
     })
@@ -95,7 +97,7 @@ const seedIfNeeded = () => {
 
 const requireAuth = () => {
   seedIfNeeded()
-  const userId = Number(localStorage.getItem(STORAGE_KEYS.sessionUserId) || 0)
+  const userId = getNumber(STORAGE_KEYS.sessionUserId, 0)
   if (!userId) throw errorOf(401, '未登录')
   const users = getJson(STORAGE_KEYS.users, [])
   const user = users.find((u) => u.id === userId)
